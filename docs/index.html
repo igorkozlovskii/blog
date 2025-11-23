@@ -35,6 +35,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
@@ -72,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -101,6 +102,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./notes.html"> 
 <span class="menu-text">Notes</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./cv.html"> 
+<span class="menu-text">CV</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -121,44 +126,113 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hi-im-igor" id="toc-hi-im-igor" class="nav-link active" data-scroll-target="#hi-im-igor">Hi, I’m Igor</a>
+  <ul class="collapse">
+  <li><a href="#currently" id="toc-currently" class="nav-link" data-scroll-target="#currently">Currently</a></li>
+  <li><a href="#research-interests" id="toc-research-interests" class="nav-link" data-scroll-target="#research-interests">Research interests</a></li>
+  <li><a href="#selected-work" id="toc-selected-work" class="nav-link" data-scroll-target="#selected-work">Selected work</a></li>
+  <li><a href="#about-this-site" id="toc-about-this-site" class="nav-link" data-scroll-target="#about-this-site">About this site</a></li>
+  <li><a href="#elsewhere" id="toc-elsewhere" class="nav-link" data-scroll-target="#elsewhere">Elsewhere</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<div class="quarto-about-jolla">
-  <img src="profile.jpg" class="about-image
-  round " style="height: 15em; width: 15em;">
- <header id="title-block-header" class="quarto-title-block default">
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">About</h1>
 </div>
-<div class="quarto-title-meta">
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
   </div>
-</header><main class="content" id="quarto-document-content">
-<p>About this blog</p>
+  
 
 
-</main> 
-  <hr class="about-sep">
-   <div class="about-links">
-  <a href="https://twitter.com" class="about-link" rel="" target="">
-    <i class="bi bi-twitter"></i>
-     <span class="about-link-text">Twitter</span>
-  </a>
-  <a href="https://linkedin.com" class="about-link" rel="" target="">
-    <i class="bi bi-linkedin"></i>
-     <span class="about-link-text">LinkedIn</span>
-  </a>
-  <a href="https://github.com" class="about-link" rel="" target="">
-    <i class="bi bi-github"></i>
-     <span class="about-link-text">Github</span>
-  </a>
-</div>
-</div>
- <!-- /main -->
+</header>
+
+
+<p><img src="img/photo.jpg" class="profile-photo-rect img-fluid"></p>
+<section id="hi-im-igor" class="level1">
+<h1>Hi, I’m Igor</h1>
+<p>I work at the intersection of <strong>structural bioinformatics</strong>, <strong>deep learning</strong>, and <strong>molecule generation for drug design</strong>. I like building models and tools that are actually usable for large-scale virtual screening.</p>
+<section id="currently" class="level2">
+<h2 class="anchored" data-anchor-id="currently">Currently</h2>
+<ul>
+<li>PhD student in computer science at Constructor University (Bremen).</li>
+<li>Researcher at a startup working on computational methods for drug discovery.</li>
+<li>Working on binding-site prediction and generative models for small molecules / ligands.</li>
+</ul>
+</section>
+<section id="research-interests" class="level2">
+<h2 class="anchored" data-anchor-id="research-interests">Research interests</h2>
+<ul>
+<li>Deep learning on 3D molecular data (grids, point clouds, graphs).</li>
+<li>Binding site identification and ion/ligand specificity.</li>
+<li>Generative models for molecule design (VAEs, diffusion, hierarchical models).</li>
+<li>Practical pipelines: from PDB datasets to screening-ready models.</li>
+</ul>
+</section>
+<section id="selected-work" class="level2">
+<h2 class="anchored" data-anchor-id="selected-work">Selected work</h2>
+<ul>
+<li><strong>Spatiotemporal identification of druggable binding sites</strong> – deep-learning framework to detect transient pockets from MD simulations<br>
+(<em>Communications Biology</em>, 2020, <a href="https://doi.org/10.1038/s42003-020-01350-0">10.1038/s42003-020-01350-0</a>).</li>
+<li><strong>Protein–peptide binding site detection</strong> – 3D CNN models for protein–peptide interfaces<br>
+(<em>JCIM</em>, 2021, <a href="https://doi.org/10.1021/acs.jcim.1c00475">10.1021/acs.jcim.1c00475</a>).</li>
+<li><strong>Binding site detection in nucleic acid macromolecules</strong> – extension of structure-based deep learning to RNA/DNA binding sites<br>
+(<em>NAR Genomics and Bioinformatics</em>, 2021, <a href="https://doi.org/10.1093/nargab/lqab111">10.1093/nargab/lqab111</a>).</li>
+<li><strong>Review: computational methods for binding site prediction on macromolecules</strong> – overview of current approaches and open challenges<br>
+(<em>Quarterly Reviews of Biophysics</em>, 2025, <a href="https://doi.org/10.1017/S003358352500006X">10.1017/S003358352500006X</a>).</li>
+</ul>
+<p>In the meantime, you can see some of the technical background in my <a href="./blog.html">Research Blog</a>.</p>
+</section>
+<section id="about-this-site" class="level2">
+<h2 class="anchored" data-anchor-id="about-this-site">About this site</h2>
+<p>This website has two main parts:</p>
+<ul>
+<li><strong>Research Blog</strong> - technical posts about structural bioinformatics, deep learning, datasets, and tooling.</li>
+<li><strong>Notes</strong> - more informal things: music, books, generative art, and various experiments.</li>
+</ul>
+<p>The goal is to document things I find interesting or useful enough to write down.</p>
+</section>
+<section id="elsewhere" class="level2">
+<h2 class="anchored" data-anchor-id="elsewhere">Elsewhere</h2>
+<ul>
+<li>GitHub: <a href="https://github.com/igorkozlovskii" class="uri">https://github.com/igorkozlovskii</a></li>
+<li>LinkedIn: <a href="https://www.linkedin.com/in/igorkozlovskii" class="uri">https://www.linkedin.com/in/igorkozlovskii</a></li>
+<li>Email: <code>igor [dot] kozlovskii [dot] a [at] google [dot] com</code></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
     const isCodeAnnotation = (el) => {
       for (const clz of el.classList) {
         if (clz.startsWith('code-annotation-')) {                     

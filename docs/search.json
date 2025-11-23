@@ -7,11 +7,102 @@
     "text": "In this post I explore how ideas from discrete dequantization in flow-based and autoregressive models might map onto affinity prediction tasks, where IC50/Kd labels are noisy and binned into broad classes…"
   },
   {
-    "objectID": "notes.html",
-    "href": "notes.html",
-    "title": "Notes",
+    "objectID": "cv.html",
+    "href": "cv.html",
+    "title": "CV",
     "section": "",
-    "text": "This is where I put less formal things.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nGuitar practice log: metalcore rhythms\n\n\n\nmusic\n\npersonal\n\n\n\nNotes on learning palm-muted chugs and basic metalcore rhythms.\n\n\n\n\n\nNov 24, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
+    "text": "Last updated: November 2025\nA full PDF CV is available on request.\n\n\n\nPhD in Computer Science, Constructor University Bremen, Germany\n2024 – present\n\nResearch group of Prof. Petr Popov\n\nFocus: structural bioinformatics, deep learning, generative models for drug design.\n\nPhD (Candidate of Sciences), Skolkovo Institute of Science and Technology (Skoltech), Russia\n2020 – 2024\n\nComputational and Data Science and Engineering (CDSE), iMolecule lab\n\nThesis: deep learning for binding site identification in macromolecules.\n\nMSc in Applied Physics and Mathematics, Moscow Institute of Physics and Technology (MIPT), Russia\n2018 – 2020\n\nBiophysics track, Laboratory of Structural Biology of G Protein-Coupled Receptors\n\nGPA: 4.83 / 5.\n\nBSc in Applied Physics and Mathematics, Moscow Institute of Physics and Technology (MIPT), Russia\n2014 – 2018\n\nBiophysics track, Department of General and Applied Physics\n\nGPA: 4.38 / 5.\n\n\n\n\n\n\nResearcher / Software Developer, Tetra D AG, Switzerland\n2024 – present\n\nDevelopment of a computational platform for structure-based drug design.\n\nDesign and implementation of hierarchical 3D latent diffusion models for molecule generation.\n\nResearcher / PhD Student, iMolecule lab, Skoltech\n2019 – 2024\n\nDeep learning for binding site identification in proteins, nucleic acids, and complexes.\n\nLarge-scale dataset curation, model development (BiteNet family), and case studies on diverse targets.\n\nResearcher (BSc/MSc Student), Laboratory of Structural Biology of GPCRs, MIPT\n2017 – 2020\n\nBinding-site detection on protein complexes using 3D CNNs.\n\nIdentification of stabilizing mutations in GPCRs using machine learning.\n\n\n\n\n\n\nComputational methods for binding site prediction on macromolecules\nKozlovskii, I., Popov, P.\nQuarterly Reviews of Biophysics, 58, e12, 2025.\n10.1017/S003358352500006X\nApproaching Optimal pH Enzyme Prediction with Large Language Models\nZaretckii, M., Buslaev, P., Kozlovskii, I., Morozov, A., Popov, P.\nACS Synthetic Biology, 13(9), 3013–3021, 2024.\n10.1021/acssynbio.4c00465\nUnraveling viral drug targets: a deep learning-based approach for the identification of potential binding sites\nPopov, P., Kalinin, R., Buslaev, P., Kozlovskii, I., Zaretckii, M., Karlov, D., … Stepanov, A.\nBriefings in Bioinformatics, 25(1), bbad459, 2024.\n10.1093/bib/bbad459\nA community effort in SARS-CoV-2 drug discovery\nSchimunek, J., Seidl, P., Elez, K., Hempel, T., Le, T., Noé, F., … Kozlovskii, I., … Varnek, A.\nMolecular Informatics, 43(1), e202300262, 2024.\n10.1002/minf.202300262\nStructure-based deep learning for binding site detection in nucleic acid macromolecules\nKozlovskii, I., & Popov, P.\nNAR Genomics and Bioinformatics, 3(4), lqab111, 2021.\n10.1093/nargab/lqab111\nProtein–peptide binding site detection using 3D convolutional neural networks\nKozlovskii, I., & Popov, P.\nJournal of Chemical Information and Modeling, 61(8), 3814–3823, 2021.\n10.1021/acs.jcim.1c00475\nSpatiotemporal identification of druggable binding sites using deep learning\nKozlovskii, I., & Popov, P.\nCommunications Biology, 3, 618, 2020.\n10.1038/s42003-020-01350-0\n\n\n\n\n\nBinding site detection with 3D CNNs (BiteNet family)\n\nFast voxelization of protein atomic environments (C++/CUDA, OpenMP).\n\n3D YOLO-like architectures for binding site detection on proteins, peptides, and nucleic acids.\n\nLarge-scale PDB-derived datasets with sequence/structure/site-based de-duplication.\n\nHierarchical 3D latent diffusion for molecule design\n\nHierarchical pipeline combining VAE, diffusion model, and reconstruction modules for 3D molecules.\n\nFocus on structure-based generative design for drug discovery.\n\nML for thermostabilizing mutations in GPCRs\n\nStructural and physicochemical descriptor pipelines for mutated positions.\n\nEnsemble models for classifying stabilizing vs non-stabilizing mutations.\n\n\n\n\n\n\nProgramming: Python, C++, CUDA\n\nDeep learning: PyTorch, TensorFlow, PyTorch Lightning\n\nScientific stack: NumPy, SciPy, pandas, scikit-learn, matplotlib, seaborn, numba, polars, plotly\n\nBioinformatics / cheminformatics: Biopython, MDAnalysis, RDKit, Modeller, PyRosetta, PDBFixer, parasail\n\nSimulation & modeling tools: GROMACS, ICM-Pro, HH-suite, MMseqs2, FoldSeek, MAFFT, BLAST, Rosetta, AlphaFold2\n\nMolecular visualization: PyMOL, VMD, SAMSON, py3Dmol\n\nTooling & infrastructure: Git, Docker, Slurm, Conda, pyenv, Poetry, Pixi, Flask\n\n\n\n\n\nTeaching Assistant, “Business Communication” course, Skoltech (2023)\n\nGuest lectures on machine learning topics (decision trees, ensembles, etc.) at university level.\n\n\n\n\n\nPresidential Scholarship of the Russian Federation, 2022–2023\n\nCopenhagen Bioinformatics Hackathon 2021 – 1st place (optimal pH prediction challenge).\n\nHealth Data Hack 2022 – 3rd place (cancer cell detection in histopathology, CV track).\n\nOther hackathons and competitions are listed in the full CV.\n\n\n\n\n\nCertificate of State Registration of a Computer Program No. RU 2023613561 – BiteNet (v1.2), 2023.\n\nPatent No. RU 2743316 – Method for identification of binding sites of protein complexes, 2021.\n\nCertificate of State Registration of a Computer Program No. RU 2020661135 – BiteNet, 2020."
+  },
+  {
+    "objectID": "cv.html#education",
+    "href": "cv.html#education",
+    "title": "CV",
+    "section": "",
+    "text": "PhD in Computer Science, Constructor University Bremen, Germany\n2024 – present\n\nResearch group of Prof. Petr Popov\n\nFocus: structural bioinformatics, deep learning, generative models for drug design.\n\nPhD (Candidate of Sciences), Skolkovo Institute of Science and Technology (Skoltech), Russia\n2020 – 2024\n\nComputational and Data Science and Engineering (CDSE), iMolecule lab\n\nThesis: deep learning for binding site identification in macromolecules.\n\nMSc in Applied Physics and Mathematics, Moscow Institute of Physics and Technology (MIPT), Russia\n2018 – 2020\n\nBiophysics track, Laboratory of Structural Biology of G Protein-Coupled Receptors\n\nGPA: 4.83 / 5.\n\nBSc in Applied Physics and Mathematics, Moscow Institute of Physics and Technology (MIPT), Russia\n2014 – 2018\n\nBiophysics track, Department of General and Applied Physics\n\nGPA: 4.38 / 5."
+  },
+  {
+    "objectID": "cv.html#experience",
+    "href": "cv.html#experience",
+    "title": "CV",
+    "section": "",
+    "text": "Researcher / Software Developer, Tetra D AG, Switzerland\n2024 – present\n\nDevelopment of a computational platform for structure-based drug design.\n\nDesign and implementation of hierarchical 3D latent diffusion models for molecule generation.\n\nResearcher / PhD Student, iMolecule lab, Skoltech\n2019 – 2024\n\nDeep learning for binding site identification in proteins, nucleic acids, and complexes.\n\nLarge-scale dataset curation, model development (BiteNet family), and case studies on diverse targets.\n\nResearcher (BSc/MSc Student), Laboratory of Structural Biology of GPCRs, MIPT\n2017 – 2020\n\nBinding-site detection on protein complexes using 3D CNNs.\n\nIdentification of stabilizing mutations in GPCRs using machine learning."
+  },
+  {
+    "objectID": "cv.html#selected-publications",
+    "href": "cv.html#selected-publications",
+    "title": "CV",
+    "section": "",
+    "text": "Computational methods for binding site prediction on macromolecules\nKozlovskii, I., Popov, P.\nQuarterly Reviews of Biophysics, 58, e12, 2025.\n10.1017/S003358352500006X\nApproaching Optimal pH Enzyme Prediction with Large Language Models\nZaretckii, M., Buslaev, P., Kozlovskii, I., Morozov, A., Popov, P.\nACS Synthetic Biology, 13(9), 3013–3021, 2024.\n10.1021/acssynbio.4c00465\nUnraveling viral drug targets: a deep learning-based approach for the identification of potential binding sites\nPopov, P., Kalinin, R., Buslaev, P., Kozlovskii, I., Zaretckii, M., Karlov, D., … Stepanov, A.\nBriefings in Bioinformatics, 25(1), bbad459, 2024.\n10.1093/bib/bbad459\nA community effort in SARS-CoV-2 drug discovery\nSchimunek, J., Seidl, P., Elez, K., Hempel, T., Le, T., Noé, F., … Kozlovskii, I., … Varnek, A.\nMolecular Informatics, 43(1), e202300262, 2024.\n10.1002/minf.202300262\nStructure-based deep learning for binding site detection in nucleic acid macromolecules\nKozlovskii, I., & Popov, P.\nNAR Genomics and Bioinformatics, 3(4), lqab111, 2021.\n10.1093/nargab/lqab111\nProtein–peptide binding site detection using 3D convolutional neural networks\nKozlovskii, I., & Popov, P.\nJournal of Chemical Information and Modeling, 61(8), 3814–3823, 2021.\n10.1021/acs.jcim.1c00475\nSpatiotemporal identification of druggable binding sites using deep learning\nKozlovskii, I., & Popov, P.\nCommunications Biology, 3, 618, 2020.\n10.1038/s42003-020-01350-0"
+  },
+  {
+    "objectID": "cv.html#research-projects",
+    "href": "cv.html#research-projects",
+    "title": "CV",
+    "section": "",
+    "text": "Binding site detection with 3D CNNs (BiteNet family)\n\nFast voxelization of protein atomic environments (C++/CUDA, OpenMP).\n\n3D YOLO-like architectures for binding site detection on proteins, peptides, and nucleic acids.\n\nLarge-scale PDB-derived datasets with sequence/structure/site-based de-duplication.\n\nHierarchical 3D latent diffusion for molecule design\n\nHierarchical pipeline combining VAE, diffusion model, and reconstruction modules for 3D molecules.\n\nFocus on structure-based generative design for drug discovery.\n\nML for thermostabilizing mutations in GPCRs\n\nStructural and physicochemical descriptor pipelines for mutated positions.\n\nEnsemble models for classifying stabilizing vs non-stabilizing mutations."
+  },
+  {
+    "objectID": "cv.html#technical-skills",
+    "href": "cv.html#technical-skills",
+    "title": "CV",
+    "section": "",
+    "text": "Programming: Python, C++, CUDA\n\nDeep learning: PyTorch, TensorFlow, PyTorch Lightning\n\nScientific stack: NumPy, SciPy, pandas, scikit-learn, matplotlib, seaborn, numba, polars, plotly\n\nBioinformatics / cheminformatics: Biopython, MDAnalysis, RDKit, Modeller, PyRosetta, PDBFixer, parasail\n\nSimulation & modeling tools: GROMACS, ICM-Pro, HH-suite, MMseqs2, FoldSeek, MAFFT, BLAST, Rosetta, AlphaFold2\n\nMolecular visualization: PyMOL, VMD, SAMSON, py3Dmol\n\nTooling & infrastructure: Git, Docker, Slurm, Conda, pyenv, Poetry, Pixi, Flask"
+  },
+  {
+    "objectID": "cv.html#teaching",
+    "href": "cv.html#teaching",
+    "title": "CV",
+    "section": "",
+    "text": "Teaching Assistant, “Business Communication” course, Skoltech (2023)\n\nGuest lectures on machine learning topics (decision trees, ensembles, etc.) at university level."
+  },
+  {
+    "objectID": "cv.html#scholarships-awards",
+    "href": "cv.html#scholarships-awards",
+    "title": "CV",
+    "section": "",
+    "text": "Presidential Scholarship of the Russian Federation, 2022–2023\n\nCopenhagen Bioinformatics Hackathon 2021 – 1st place (optimal pH prediction challenge).\n\nHealth Data Hack 2022 – 3rd place (cancer cell detection in histopathology, CV track).\n\nOther hackathons and competitions are listed in the full CV."
+  },
+  {
+    "objectID": "cv.html#patents-and-software",
+    "href": "cv.html#patents-and-software",
+    "title": "CV",
+    "section": "",
+    "text": "Certificate of State Registration of a Computer Program No. RU 2023613561 – BiteNet (v1.2), 2023.\n\nPatent No. RU 2743316 – Method for identification of binding sites of protein complexes, 2021.\n\nCertificate of State Registration of a Computer Program No. RU 2020661135 – BiteNet, 2020."
+  },
+  {
+    "objectID": "index.html#currently",
+    "href": "index.html#currently",
+    "title": "About",
+    "section": "Currently",
+    "text": "Currently\n\nPhD student in computer science at Constructor University (Bremen).\nResearcher at a startup working on computational methods for drug discovery.\nWorking on binding-site prediction and generative models for small molecules / ligands."
+  },
+  {
+    "objectID": "index.html#research-interests",
+    "href": "index.html#research-interests",
+    "title": "About",
+    "section": "Research interests",
+    "text": "Research interests\n\nDeep learning on 3D molecular data (grids, point clouds, graphs).\nBinding site identification and ion/ligand specificity.\nGenerative models for molecule design (VAEs, diffusion, hierarchical models).\nPractical pipelines: from PDB datasets to screening-ready models."
+  },
+  {
+    "objectID": "index.html#selected-work",
+    "href": "index.html#selected-work",
+    "title": "About",
+    "section": "Selected work",
+    "text": "Selected work\n\nSpatiotemporal identification of druggable binding sites – deep-learning framework to detect transient pockets from MD simulations\n(Communications Biology, 2020, 10.1038/s42003-020-01350-0).\nProtein–peptide binding site detection – 3D CNN models for protein–peptide interfaces\n(JCIM, 2021, 10.1021/acs.jcim.1c00475).\nBinding site detection in nucleic acid macromolecules – extension of structure-based deep learning to RNA/DNA binding sites\n(NAR Genomics and Bioinformatics, 2021, 10.1093/nargab/lqab111).\nReview: computational methods for binding site prediction on macromolecules – overview of current approaches and open challenges\n(Quarterly Reviews of Biophysics, 2025, 10.1017/S003358352500006X).\n\nIn the meantime, you can see some of the technical background in my Research Blog."
+  },
+  {
+    "objectID": "index.html#about-this-site",
+    "href": "index.html#about-this-site",
+    "title": "About",
+    "section": "About this site",
+    "text": "About this site\nThis website has two main parts:\n\nResearch Blog - technical posts about structural bioinformatics, deep learning, datasets, and tooling.\nNotes - more informal things: music, books, generative art, and various experiments.\n\nThe goal is to document things I find interesting or useful enough to write down."
+  },
+  {
+    "objectID": "index.html#elsewhere",
+    "href": "index.html#elsewhere",
+    "title": "About",
+    "section": "Elsewhere",
+    "text": "Elsewhere\n\nGitHub: https://github.com/igorkozlovskii\nLinkedIn: https://www.linkedin.com/in/igorkozlovskii\nEmail: igor [dot] kozlovskii [dot] a [at] google [dot] com"
   },
   {
     "objectID": "blog.html",
@@ -21,11 +112,11 @@
     "text": "Welcome to my research blog. I write about structural bioinformatics, deep learning, and related technical topics. For more informal posts, see the Notes section.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDequantization tricks for noisy affinity prediction\n\n\n\nresearch\n\ndeep-learning\n\nstructural-bioinf\n\n\n\nThinking about discretization/dequantization ideas for binding affinity models.\n\n\n\n\n\nNov 23, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "About",
+    "objectID": "notes.html",
+    "href": "notes.html",
+    "title": "Notes",
     "section": "",
-    "text": "About this blog"
+    "text": "This is where I put less formal things.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nGuitar practice log: metalcore rhythms\n\n\n\nmusic\n\npersonal\n\n\n\nNotes on learning palm-muted chugs and basic metalcore rhythms.\n\n\n\n\n\nNov 24, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/metal-practice-log/index.html",

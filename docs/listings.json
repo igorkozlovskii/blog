@@ -1,14 +1,14 @@
 [
   {
-    "listing": "/notes.html",
-    "items": [
-      "/posts/metal-practice-log/index.html"
-    ]
-  },
-  {
     "listing": "/blog.html",
     "items": [
       "/posts/affinity-dequantization/index.html"
+    ]
+  },
+  {
+    "listing": "/notes.html",
+    "items": [
+      "/posts/metal-practice-log/index.html"
     ]
   }
 ]

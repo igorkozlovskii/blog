@@ -1,1 +1,42 @@
-/* css styles */
+/* styles.css */
+
+/* Slightly narrower text width for readability */
+main.content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Tweak heading spacing */
+h1, h2, h3 {
+  margin-top: 1.4em;
+  margin-bottom: 0.6em;
+}
+
+/* Make links a bit cleaner */
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Better list spacing */
+li {
+  margin-bottom: 0.3em;
+}
+
+.profile-photo {
+  width: 180px;
+  height: 180px;          /* force square */
+  border-radius: 50%;     /* perfect circle */
+  object-fit: cover;      /* crop to fill the square */
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+.profile-photo-rect {
+  width: 220px;           /* or whatever looks good */
+  /* no fixed height → keeps original aspect */
+  border-radius: 0;       /* or e.g. 12px for soft corners */
+  float: right;
+  margin: 0 0 1rem 1rem;
+}

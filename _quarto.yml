@@ -12,6 +12,8 @@ website:
         href: blog.qmd
       - text: "Notes"
         href: notes.qmd
+      - text: "CV"
+        href: cv.qmd
     right:
       - icon: github
         href: https://github.com/igorkozlovskii
