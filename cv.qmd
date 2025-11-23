@@ -1,0 +1,130 @@
+---
+title: "CV"
+page-layout: full
+---
+
+# Curriculum Vitae
+
+_Last updated: November 2025_
+
+_A full PDF CV is available on request._
+
+## Education
+
+- **PhD in Computer Science**, Constructor University Bremen, Germany  
+  2024 – present  
+  - Research group of Prof. Petr Popov  
+  - Focus: structural bioinformatics, deep learning, generative models for drug design.
+
+- **PhD (Candidate of Sciences)**, Skolkovo Institute of Science and Technology (Skoltech), Russia  
+  2020 – 2024  
+  - Computational and Data Science and Engineering (CDSE), iMolecule lab  
+  - Thesis: deep learning for binding site identification in macromolecules.
+
+- **MSc in Applied Physics and Mathematics**, Moscow Institute of Physics and Technology (MIPT), Russia  
+  2018 – 2020  
+  - Biophysics track, Laboratory of Structural Biology of G Protein-Coupled Receptors  
+  - GPA: 4.83 / 5.
+
+- **BSc in Applied Physics and Mathematics**, Moscow Institute of Physics and Technology (MIPT), Russia  
+  2014 – 2018  
+  - Biophysics track, Department of General and Applied Physics  
+  - GPA: 4.38 / 5.
+
+## Experience
+
+- **Researcher / Software Developer**, Tetra D AG, Switzerland  
+  2024 – present  
+  - Development of a computational platform for structure-based drug design.  
+  - Design and implementation of hierarchical 3D latent diffusion models for molecule generation.
+
+- **Researcher / PhD Student**, iMolecule lab, Skoltech  
+  2019 – 2024
+  - Deep learning for binding site identification in proteins, nucleic acids, and complexes.  
+  - Large-scale dataset curation, model development (BiteNet family), and case studies on diverse targets.
+
+- **Researcher (BSc/MSc Student)**, Laboratory of Structural Biology of GPCRs, MIPT  
+  2017 – 2020  
+  - Binding-site detection on protein complexes using 3D CNNs.  
+  - Identification of stabilizing mutations in GPCRs using machine learning.
+
+
+## Selected Publications
+
+- **Computational methods for binding site prediction on macromolecules**  
+  _Kozlovskii, I._, Popov, P.  
+  _Quarterly Reviews of Biophysics_, 58, e12, 2025.  
+  [10.1017/S003358352500006X](https://doi.org/10.1017/S003358352500006X)
+
+- **Approaching Optimal pH Enzyme Prediction with Large Language Models**  
+  Zaretckii, M., Buslaev, P., _Kozlovskii, I._, Morozov, A., Popov, P.  
+  _ACS Synthetic Biology_, 13(9), 3013–3021, 2024.  
+  [10.1021/acssynbio.4c00465](https://doi.org/10.1021/acssynbio.4c00465)
+
+- **Unraveling viral drug targets: a deep learning-based approach for the identification of potential binding sites**  
+  Popov, P., Kalinin, R., Buslaev, P., _Kozlovskii, I._, Zaretckii, M., Karlov, D., … Stepanov, A.  
+  _Briefings in Bioinformatics_, 25(1), bbad459, 2024.  
+  [10.1093/bib/bbad459](https://doi.org/10.1093/bib/bbad459)
+
+- **A community effort in SARS-CoV-2 drug discovery**  
+  Schimunek, J., Seidl, P., Elez, K., Hempel, T., Le, T., Noé, F., … _Kozlovskii, I._, … Varnek, A.  
+  _Molecular Informatics_, 43(1), e202300262, 2024.  
+  [10.1002/minf.202300262](https://doi.org/10.1002/minf.202300262)
+
+- **Structure-based deep learning for binding site detection in nucleic acid macromolecules**  
+  _Kozlovskii, I._, & Popov, P.  
+  _NAR Genomics and Bioinformatics_, 3(4), lqab111, 2021.  
+  [10.1093/nargab/lqab111](https://doi.org/10.1093/nargab/lqab111)
+
+- **Protein–peptide binding site detection using 3D convolutional neural networks**  
+  _Kozlovskii, I._, & Popov, P.  
+  _Journal of Chemical Information and Modeling_, 61(8), 3814–3823, 2021.  
+  [10.1021/acs.jcim.1c00475](https://doi.org/10.1021/acs.jcim.1c00475)
+
+- **Spatiotemporal identification of druggable binding sites using deep learning**  
+  _Kozlovskii, I._, & Popov, P.  
+  _Communications Biology_, 3, 618, 2020.  
+  [10.1038/s42003-020-01350-0](https://doi.org/10.1038/s42003-020-01350-0)
+
+## Research Projects
+
+- **Binding site detection with 3D CNNs (BiteNet family)**  
+  - Fast voxelization of protein atomic environments (C++/CUDA, OpenMP).  
+  - 3D YOLO-like architectures for binding site detection on proteins, peptides, and nucleic acids.  
+  - Large-scale PDB-derived datasets with sequence/structure/site-based de-duplication.
+
+- **Hierarchical 3D latent diffusion for molecule design**  
+  - Hierarchical pipeline combining VAE, diffusion model, and reconstruction modules for 3D molecules.  
+  - Focus on structure-based generative design for drug discovery.
+
+- **ML for thermostabilizing mutations in GPCRs**  
+  - Structural and physicochemical descriptor pipelines for mutated positions.  
+  - Ensemble models for classifying stabilizing vs non-stabilizing mutations.
+
+## Technical Skills
+
+- **Programming**: Python, C++, CUDA  
+- **Deep learning**: PyTorch, TensorFlow, PyTorch Lightning  
+- **Scientific stack**: NumPy, SciPy, pandas, scikit-learn, matplotlib, seaborn, numba, polars, plotly  
+- **Bioinformatics / cheminformatics**: Biopython, MDAnalysis, RDKit, Modeller, PyRosetta, PDBFixer, parasail  
+- **Simulation & modeling tools**: GROMACS, ICM-Pro, HH-suite, MMseqs2, FoldSeek, MAFFT, BLAST, Rosetta, AlphaFold2  
+- **Molecular visualization**: PyMOL, VMD, SAMSON, py3Dmol  
+- **Tooling & infrastructure**: Git, Docker, Slurm, Conda, pyenv, Poetry, Pixi, Flask
+
+## Teaching
+
+- **Teaching Assistant**, “Business Communication” course, Skoltech (2023)  
+- Guest lectures on machine learning topics (decision trees, ensembles, etc.) at university level.
+
+## Scholarships & Awards
+
+- **Presidential Scholarship of the Russian Federation**, 2022–2023  
+- **Copenhagen Bioinformatics Hackathon 2021** – 1st place (optimal pH prediction challenge).  
+- **Health Data Hack 2022** – 3rd place (cancer cell detection in histopathology, CV track).  
+- Other hackathons and competitions are listed in the full CV.
+
+## Patents and Software
+
+- Certificate of State Registration of a Computer Program No. RU 2023613561 – **BiteNet (v1.2)**, 2023.  
+- Patent No. RU 2743316 – **Method for identification of binding sites of protein complexes**, 2021.  
+- Certificate of State Registration of a Computer Program No. RU 2020661135 – **BiteNet**, 2020.
