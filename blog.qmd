@@ -1,0 +1,20 @@
+---
+title: "Research Blog"
+listing:
+  contents: posts
+  feed:
+    items: 20
+  sort: "date desc"
+  type: default
+  categories: numbered
+  sort-ui: false
+  filter-ui: false
+  include: 
+    categories: ["research"]
+page-layout: full
+---
+
+
+Welcome to my research blog. I write about structural bioinformatics,
+deep learning, and related technical topics. For more informal posts, see
+the **Notes** section.

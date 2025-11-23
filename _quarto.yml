@@ -1,0 +1,28 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Igor Kozlovskii"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Research Blog"
+        href: blog.qmd
+      - text: "Notes"
+        href: notes.qmd
+    right:
+      - icon: github
+        href: https://github.com/igorkozlovskii
+      # - icon: twitter
+      #   href: https://twitter.com/
+      - icon: linkedin
+        href: https://www.linkedin.com/in/igorkozlovskii
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    code-fold: true

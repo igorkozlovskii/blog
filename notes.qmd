@@ -1,0 +1,15 @@
+---
+title: "Notes"
+page-layout: full
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: cloud
+  sort-ui: false
+  filter-ui: true
+  exclude:
+    categories: ["research"]
+---
+
+This is where I put less formal things.

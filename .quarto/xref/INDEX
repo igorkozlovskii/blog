@@ -1,0 +1,26 @@
+{
+  "about.qmd": {
+    "about.html": "9341ade8"
+  },
+  "index.qmd": {
+    "index.html": "bb28b9b8"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "39c19fa5"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "ee9f2355"
+  },
+  "blog.qmd": {
+    "blog.html": "81cbe83b"
+  },
+  "notes.qmd": {
+    "notes.html": "da12a44a"
+  },
+  "posts/metal-practice-log/index.qmd": {
+    "index.html": "24473a50"
+  },
+  "posts/affinity-dequantization/index.qmd": {
+    "index.html": "22659a99"
+  }
+}

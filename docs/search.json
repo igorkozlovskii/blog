@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "posts/affinity-dequantization/index.html",
+    "href": "posts/affinity-dequantization/index.html",
+    "title": "Dequantization tricks for noisy affinity prediction",
+    "section": "",
+    "text": "In this post I explore how ideas from discrete dequantization in flow-based and autoregressive models might map onto affinity prediction tasks, where IC50/Kd labels are noisy and binned into broad classes…"
+  },
+  {
+    "objectID": "notes.html",
+    "href": "notes.html",
+    "title": "Notes",
+    "section": "",
+    "text": "This is where I put less formal things.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nGuitar practice log: metalcore rhythms\n\n\n\nmusic\n\npersonal\n\n\n\nNotes on learning palm-muted chugs and basic metalcore rhythms.\n\n\n\n\n\nNov 24, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Research Blog",
+    "section": "",
+    "text": "Welcome to my research blog. I write about structural bioinformatics, deep learning, and related technical topics. For more informal posts, see the Notes section.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDequantization tricks for noisy affinity prediction\n\n\n\nresearch\n\ndeep-learning\n\nstructural-bioinf\n\n\n\nThinking about discretization/dequantization ideas for binding affinity models.\n\n\n\n\n\nNov 23, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "posts/metal-practice-log/index.html",
+    "href": "posts/metal-practice-log/index.html",
+    "title": "Guitar practice log: metalcore rhythms",
+    "section": "",
+    "text": "Quick log of what I practiced this week, mainly focusing on downpicking and some polyrhythmic riffs…"
+  }
+]
