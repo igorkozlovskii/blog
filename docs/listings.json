@@ -1,14 +1,12 @@
 [
   {
-    "listing": "/blog.html",
-    "items": [
-      "/posts/affinity-dequantization/index.html"
-    ]
+    "listing": "/notes.html",
+    "items": []
   },
   {
-    "listing": "/notes.html",
+    "listing": "/blog.html",
     "items": [
-      "/posts/metal-practice-log/index.html"
+      "/posts/remote-pymol/index.html"
     ]
   }
 ]

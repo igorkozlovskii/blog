@@ -1,9 +1,0 @@
----
-title: "Guitar practice log: metalcore rhythms"
-date: 2025-11-24
-description: "Notes on learning palm-muted chugs and basic metalcore rhythms."
-categories: [music, personal]
----
-
-Quick log of what I practiced this week, mainly focusing on downpicking
-and some polyrhythmic riffs...

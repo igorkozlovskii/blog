@@ -1,0 +1,615 @@
+---
+title: "Running PyMOL on a Remote Server (Without AnyDesk or RDP)"
+description: "Using VirtualGL (vglconnect / vglrun) to get a smooth remote PyMOL on a headless GPU server, plus notebook and VS Code viewers."
+categories: [notes, tools,research]
+date: 2025-11-24
+jupyter: python3
+execute:
+  enabled: true
+  cache: false
+code-fold: show
+image: img/pymol-vglrun-preview.png
+---
+
+## TL;DR
+
+**Once (admin side):**
+
+- Install VirtualGL on server + client, run `vglserver_config`, add you to `vglusers`.  
+- If you don’t have `sudo`, you need an admin to do this install/config once; after that, all user-side commands work exactly as shown.
+
+**Once (your account on the server):**
+
+After you’ve been added to `vglusers` and logged out / in again, put this into `~/.bashrc`:
+
+```bash
+# VirtualGL defaults for this server
+export VGL_DISPLAY=egl
+export VGL_IMAGEQUAL=95
+export VGL_NPROCS=4
+````
+
+**Everyday workflow then becomes:**
+
+```bash
+vglconnect -s user@server
+vglrun pymol protein.pdb
+```
+
+That’s it: no `newgrp`, no manual `export` every time.
+
+If you **don’t** want to touch `~/.bashrc`, you can instead do:
+
+```bash
+vglconnect -s user@server
+VGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb
+```
+
+---
+
+Running PyMOL on a remote GPU server is often more painful than it should be:
+
+* You **can’t** use AnyDesk / RDP because of institutional policy.
+* The server is **headless** (no display, no local X session).
+* X11 forwarding sometimes works, sometimes not, and is often ridiculously slow.
+
+There are some workarounds:
+
+* `ssh -X pymol`
+* browser-based viewers like `py3Dmol`, `nglview`, etc.
+* VS Code / web-based viewers.
+
+…but they all have trade-offs:
+
+* `ssh -X` is almost always **too laggy** over a real network and often falls back to **software rendering** (no GPU).
+- Copying structures or MD trajectories to a laptop just to visualize them is slow and inconvenient; long trajectories are often huge, and many lightweight viewers don’t handle trajectories particularly well anyway.
+* Notebook / browser viewers are great for quick inspection, but:
+
+  * it’s harder to do complex selections,
+  * you don’t get the same level of **interactive control** as in PyMOL,
+  * and they’re not ideal for **publication-quality renders** with fine-tuned lighting, ray-tracing, etc.
+
+What I really want is:
+
+> **Full PyMOL, on the remote GPU, but the window appears locally and stays responsive.**
+
+That’s exactly what **VirtualGL** gives: the server does the GPU rendering, sends compressed frames over SSH, and you see a normal window on your machine.
+
+In this note I’ll focus on that:
+
+1. Why not just `ssh -X`?
+2. Setting up **VirtualGL**.
+3. **Option A** — VirtualGL over SSH (`vglconnect` + `vglrun`): single PyMOL window (my default).
+4. **Option B** — TurboVNC + VirtualGL: full remote desktop, in case you want PyMOL + everything else.
+5. Notebook-based viewers in Jupyter (`py3Dmol`, `nglview`).
+6. Molecular viewers in VS Code (Protein Viewer, Nano Protein Viewer).
+7. Summary.
+
+---
+
+## 0. Why not just `ssh -X`?
+
+The traditional way is:
+
+```bash
+ssh -X user@server
+pymol some_structure.pdb
+```
+
+This uses **X11 forwarding**:
+
+* raw drawing commands are sent over the network,
+* rendering often happens on the **client**, not on the remote GPU,
+* the protocol is not optimized for 3D graphics.
+
+In practice this usually means:
+
+* **terrible FPS** when you rotate the molecule,
+* high latency,
+* broken or messy behavior with modern setups (Wayland on the client, EGL-only servers, etc.).
+
+It’s fine for showing a small dialog, but for interactive 3D molecular graphics it’s not pleasant.
+
+
+:::{.columns}
+::: {.column}
+![](img/pymol-ssh-x.gif){fig-alt="PyMOL over ssh -X (laggy rotation)" width=100%}
+:::
+
+::: {.column}
+![](img/pymol-vglrun.gif){fig-alt="PyMOL over vglrun (VirtualGL, smooth)" width=100%}
+:::
+:::
+
+
+**VirtualGL** fixes this by:
+
+* rendering on the **remote GPU**,
+* compressing frames to JPEG/PNG,
+* streaming them efficiently to the client.
+
+The difference in usability is night and day.
+
+---
+
+## 1. Setup: VirtualGL on server and client
+
+Assumptions:
+
+* **Server**: Ubuntu 22.04, NVIDIA GPU, proprietary driver installed.
+* **Client**: Linux desktop (Xorg or Wayland).
+* You can SSH into the server.
+
+You need VirtualGL on **both** the server and your local machine.
+
+> If you don’t have `sudo` on the server, you need an admin to do this section once (install VirtualGL, run `vglserver_config`, add you to `vglusers`). After that, everything below works unprivileged.
+
+### 1.1. Install VirtualGL on the server
+
+Download and install the `.deb` (example URL, adjust version if needed):
+
+```bash
+# on the server
+curl -L -o /tmp/virtualgl.deb \
+  https://packagecloud.io/dcommander/virtualgl/packages/any/any/virtualgl_3.1.1-20240228_amd64.deb/download
+
+sudo dpkg -i /tmp/virtualgl.deb
+```
+
+Then run the configuration script:
+
+```bash
+sudo /opt/VirtualGL/bin/vglserver_config
+```
+
+In the interactive dialog I typically choose:
+
+* **`1) GLX + EGL`** if I don’t care about local Wayland logins on that machine
+  (most compatible, but may force local users to X11), or
+* **`3) EGL only`** if the machine is basically a headless GPU box and I don’t want to mess with GLX.
+
+Other important prompts:
+
+* *Restrict 3D access to group `vglusers`?* → `Y`
+* *Add your user to `vglusers`?* → `Y`
+
+After that:
+
+* Log out and log back in so the new group membership is active, **or**
+* run `newgrp vglusers` once in an existing shell as a quick workaround.
+
+You do **not** need to run `newgrp vglusers` on every login; it’s a one-time thing after being added to the group.
+
+### 1.2. Install VirtualGL on your local machine
+
+Same idea on the client:
+
+```bash
+# on your local machine
+curl -L -o /tmp/virtualgl.deb \
+  https://packagecloud.io/dcommander/virtualgl/packages/any/any/virtualgl_3.1.1-20240228_amd64.deb/download
+
+sudo dpkg -i /tmp/virtualgl.deb
+```
+
+That’s usually it. No additional configuration needed on the client side.
+
+### 1.3. Make the VirtualGL environment automatic (recommended)
+
+On the **server**, once your account is in `vglusers` and you’ve re-logged, add this to `~/.bashrc` (or `~/.zshrc`):
+
+```bash
+# VirtualGL defaults for this server
+export VGL_DISPLAY=egl
+export VGL_IMAGEQUAL=95
+export VGL_NPROCS=4
+```
+
+If you only want this for interactive shells, you can wrap it:
+
+```bash
+if [ -n "$PS1" ]; then
+    export VGL_DISPLAY=egl
+    export VGL_IMAGEQUAL=95
+    export VGL_NPROCS=4
+fi
+```
+
+Now, every time you SSH in (including via `vglconnect`), these variables are already set and you don’t have to think about them.
+
+Alternative patterns if you don’t want permanent exports:
+
+* Define a helper function in `~/.bashrc`:
+
+  ```bash
+  vglenv() {
+      export VGL_DISPLAY=egl
+      export VGL_IMAGEQUAL=95
+      export VGL_NPROCS=4
+  }
+  ```
+
+  Then per session:
+
+  ```bash
+  vglconnect -s user@server
+  vglenv
+  vglrun pymol protein.pdb
+  ```
+
+* Or keep your dotfiles clean and just use an env prefix:
+
+  ```bash
+  VGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb
+  ```
+
+I personally prefer the “put it in `~/.bashrc` and forget about it” approach.
+
+---
+
+## 2. Option A — PyMOL over SSH with `vglconnect` (my default)
+
+This is what I use most of the time: you open a single SSH session that is “VirtualGL-aware” and then start PyMOL with GPU acceleration.
+
+No desktop, no VNC, just a PyMOL window that appears locally.
+
+### 2.1. Open a VirtualGL SSH session
+
+On your **local** machine:
+
+```bash
+/opt/VirtualGL/bin/vglconnect -s user@SERVER_IP_OR_NAME
+```
+
+This runs `ssh` under the hood, but also sets up the env so that `vglrun` will work out of the box.
+
+You’ll now be in a shell **on the server**.
+
+> You could also do a regular `ssh` and then call `/opt/VirtualGL/bin/vglrun` explicitly; I just find `vglconnect` convenient.
+
+### 2.2. (Optional) Set VirtualGL env for this session
+
+If you followed §1.3 and added the exports to `~/.bashrc`, you can **skip this** – the variables are already set.
+
+If not, you can either call your helper:
+
+```bash
+vglenv
+```
+
+or do the exports manually:
+
+```bash
+export VGL_DISPLAY=egl
+export VGL_IMAGEQUAL=95
+export VGL_NPROCS=4
+```
+
+or use the one-liner prefix later:
+
+```bash
+VGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb
+```
+
+You do **not** normally need `newgrp vglusers` here; that was only required once right after being added to the group (or you just log out/in instead).
+
+Before running PyMOL for the first time on a machine, it’s worth checking that VirtualGL sees the NVIDIA GPU:
+
+```bash
+vglrun glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'
+```
+
+You want to see something like:
+
+* `OpenGL vendor string: NVIDIA Corporation`
+* `OpenGL renderer string: NVIDIA GeForce ...`
+
+If you see `llvmpipe` or `Mesa`, you’re not using the GPU.
+
+### 2.3. Run PyMOL via VirtualGL
+
+Now just:
+
+```bash
+vglrun pymol /path/to/your_structure.pdb
+```
+
+A PyMOL window should pop up on your **local** desktop.
+
+From PyMOL’s point of view it’s running on the server, with access to server-side file paths and GPUs. From your point of view it behaves like a local app, but:
+
+* **less lag** than X forwarding,
+* proper OpenGL on the remote GPU,
+* works even when RDP/AnyDesk/etc. are blocked.
+
+Inside PyMOL I also enable this setting for correct visualization of surface with transparency:
+
+```pml
+set transparency_mode, 2
+```
+
+
+---
+
+## 3. Option B — TurboVNC + VirtualGL (full remote desktop)
+
+Sometimes you want more than just PyMOL:
+
+* multiple terminals,
+* a web browser,
+* perhaps another molecular viewer (Chimera(X), VMD, Coot, etc.),
+* all running in a persistent remote session you can reconnect to.
+
+For that, I use **TurboVNC** + VirtualGL:
+
+* TurboVNC provides the **remote desktop**.
+* VirtualGL provides GPU-accelerated 3D rendering inside that desktop.
+
+### 3.1. Install TurboVNC and a lightweight desktop
+
+On the **server** (again, admin once; if you don’t have sudo, they do this step):
+
+```bash
+# TurboVNC server
+curl -L -o /tmp/turbovnc.deb \
+  https://sourceforge.net/projects/turbovnc/files/3.1/turbovnc_3.1_amd64.deb/download
+
+sudo dpkg -i /tmp/turbovnc.deb
+
+# lightweight desktop environment
+sudo apt update
+sudo apt install -y xfce4 xfce4-terminal dbus-x11
+```
+
+You only need one DE; I use Xfce because it’s small and works well over VNC.
+
+### 3.2. Create a VNC startup script
+
+Create `~/.vnc/xstartup.turbovnc` on the server:
+
+```bash
+cat > ~/.vnc/xstartup.turbovnc <<'SH'
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+export XDG_SESSION_TYPE=x11
+export XDG_RUNTIME_DIR=/tmp/xdg-$USER
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+
+exec dbus-launch --exit-with-session startxfce4
+SH
+
+chmod +x ~/.vnc/xstartup.turbovnc
+```
+
+This script will be used to start the Xfce desktop when the VNC server launches.
+
+### 3.3. Start a VNC desktop on the server
+
+On the **server**:
+
+```bash
+/opt/TurboVNC/bin/vncserver :1 \
+  -localhost \
+  -geometry 1920x1080 \
+  -depth 24 \
+  -xstartup "$HOME/.vnc/xstartup.turbovnc"
+```
+
+Notes:
+
+* `:1` → display number; this corresponds to TCP port `5901`.
+* `-localhost` → ensures that only local connections (i.e. via SSH tunnel) can reach it.
+
+You can check active sessions:
+
+```bash
+/opt/TurboVNC/bin/vncserver -list
+```
+
+### 3.4. Connect from your local machine (SSH tunnel + viewer)
+
+On your **local** machine:
+
+```bash
+# Terminal 1: SSH tunnel (keep this open)
+ssh -NT -L 5901:localhost:5901 user@SERVER_IP_OR_NAME
+```
+
+Then, in another terminal or via your GUI:
+
+```bash
+# connect with a VNC viewer
+vncviewer localhost:1
+# or:
+# /opt/TurboVNC/bin/vncviewer localhost:1
+```
+
+You should now see an Xfce desktop running from the server.
+
+### 3.5. Run PyMOL with VirtualGL inside the VNC desktop
+
+Inside that desktop, open a terminal.
+
+If you’ve put the VirtualGL exports in `~/.bashrc`, they should already be active in that terminal, so you can go straight to:
+
+```bash
+vglrun glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'
+vglrun pymol /path/to/your_structure.pdb
+```
+
+If not, you can either call `vglenv` (if you defined it) or export manually:
+
+```bash
+export VGL_DISPLAY=egl
+export VGL_IMAGEQUAL=95
+export VGL_NPROCS=4
+vglrun pymol /path/to/your_structure.pdb
+```
+
+Again, you normally don’t need `newgrp vglusers` here as long as your group membership is already active (you re-logged after being added).
+
+When you’re done:
+
+```bash
+/opt/TurboVNC/bin/vncserver -kill :1
+```
+
+---
+
+## 4. Other molecular viewers (Chimera, VMD, etc.)
+
+The nice thing about this setup is that it’s not PyMOL-specific.
+
+Anything that uses OpenGL can go through VirtualGL:
+
+* **UCSF Chimera / ChimeraX**
+* **VMD**
+* **Coot**
+* other molecular graphics tools.
+
+You just prefix the command with `vglrun`:
+
+```bash
+vglrun chimeraX
+vglrun vmd
+vglrun coot
+```
+
+I personally mainly use PyMOL, so I haven’t gone deep into these with VirtualGL yet, but in principle they should work exactly the same way.
+
+---
+
+## 5. Notebook-based viewers in Jupyter (py3Dmol, nglview)
+
+If you already work a lot in notebooks, sometimes it’s easier to just look at the structure **inside Jupyter** and not bother with PyMOL at all.
+
+Two viewers I’ve used:
+
+* `py3Dmol` – thin Python wrapper around 3Dmol.js.
+* `nglview` – Jupyter widget based on NGL.
+
+Install (on the server, in your conda env):
+
+```bash
+# pick one or both:
+pip install py3Dmol nglview
+# or
+conda install -c conda-forge py3Dmol nglview
+```
+
+Minimal examples:
+
+**py3Dmol**
+
+```{python}
+import py3Dmol
+
+view = py3Dmol.view(width=600, height=600)
+view.addModel(open("protein.pdb").read(), "pdb")
+view.setStyle({"cartoon": {}})
+view.zoomTo()
+view.show()
+```
+
+**nglview**
+
+```{python}
+import nglview as nv
+
+w = nv.show_file("protein.pdb")
+w.clear_representations()
+w.add_cartoon()
+w
+```
+
+These are great for:
+
+* quick inspection,
+* sharing small notebooks with embedded 3D views,
+* not dealing with any X/VirtualGL setup.
+
+But compared to full PyMOL, in my experience:
+
+* it’s harder to do **very detailed selections** and custom combinations of objects,
+* you don’t get the same level of **scriptable rendering control**,
+* and they’re not the best choice for **final, publication-quality figures**.
+
+There are more notebook-based viewers out there; I’m just listing the two I actually tried.
+
+---
+
+## 6. Molecular viewers in VS Code (Protein Viewer, Nano Protein Viewer)
+
+If you’re already editing code on the remote server via **VS Code Remote SSH**, it’s nice to be able to open a `*.pdb` or `*.cif` and immediately see a 3D view next to the code.
+
+Two VS Code extensions that do this using Mol* under the hood:
+
+* **Protein Viewer** – extension by Arian Jamasb; simple viewer for biological structures.
+* **Nano Protein Viewer** – extension by Steven Yu; more advanced, grid view, Alphafold / diffusion-related features.
+
+Basic installation (on your local machine):
+
+```bash
+# from terminal, with VS Code closed
+code --install-extension ArianJamasb.protein-viewer
+code --install-extension StevenYu.nano-protein-viewer
+```
+
+Or via GUI:
+
+1. Open VS Code.
+2. Go to Extensions (`Ctrl+Shift+X` / `Cmd+Shift+X`).
+3. Search for “Protein Viewer” and/or “Nano Protein Viewer”.
+4. Install.
+
+Workflow (with Remote SSH):
+
+1. Open the remote project in VS Code (using the Remote SSH extension).
+2. Open a structure file (`.pdb`, `.cif`, `.mol2`, etc.).
+3. Use the extension’s command (usually from the Command Palette or a button in the editor) to open the 3D view.
+
+:::{.columns}
+::: {.column}
+![](img/protein-viewer.gif){fig-alt="Protein Viewer" width=100%}
+:::
+
+::: {.column}
+![](img/nano-viewer.gif){fig-alt="Nano Protein Viewer" width=100%}
+:::
+:::
+
+This is very handy for:
+
+* quickly checking structures without leaving VS Code,
+* having multiple proteins open in a grid (Nano Protein Viewer),
+* fast “sanity check” visualization while coding.
+
+One practical note: these extensions rely on **HTML/JS webviews** inside VS Code. In my experience, the **snap** build of VS Code on Ubuntu tends to break webview-based stuff more easily (or be slower). I’d recommend installing VS Code from the `.deb` package instead of the snap if you want these viewers to work reliably.
+
+---
+
+## 7. Summary
+
+* `ssh -X pymol` *does* work, but is usually **too slow** and often doesn’t use the GPU.
+* **VirtualGL** lets the **server GPU** do the heavy lifting and sends compressed frames to your local machine.
+* If you don’t have sudo, you just need an admin to:
+
+  * install VirtualGL / TurboVNC once,
+  * run `vglserver_config`,
+  * add you to `vglusers`.
+    After that, your everyday workflow is unprivileged.
+
+For day-to-day work I use:
+
+* **Option A** — `vglconnect` + `vglrun pymol`: simple, single-window workflow.
+* **Option B** — TurboVNC + VirtualGL when I want a full desktop session and multiple tools (PyMOL, Chimera, VMD, etc.).
+
+For lightweight inspection:
+
+* use **`py3Dmol`** / **`nglview`** inside Jupyter,
+* or **Protein Viewer / Nano Protein Viewer** inside VS Code.
+
+They don’t fully replace PyMOL for complex selections and publication-quality renders, but together they cover most of the “I just need to see this structure quickly, from a remote machine” use cases.

@@ -25,5 +25,8 @@
   },
   "cv.qmd": {
     "cv.html": "ebe28c25"
+  },
+  "posts/remote-pymol/index.qmd": {
+    "index.html": "7ea56f6b"
   }
 }

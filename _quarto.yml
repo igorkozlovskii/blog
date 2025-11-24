@@ -28,3 +28,5 @@ format:
     css: styles.css
     toc: true
     code-fold: true
+    grid:
+      body-width: 900px

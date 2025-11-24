@@ -1,10 +1,122 @@
 [
   {
-    "objectID": "posts/affinity-dequantization/index.html",
-    "href": "posts/affinity-dequantization/index.html",
-    "title": "Dequantization tricks for noisy affinity prediction",
+    "objectID": "posts/remote-pymol/index.html",
+    "href": "posts/remote-pymol/index.html",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
     "section": "",
-    "text": "In this post I explore how ideas from discrete dequantization in flow-based and autoregressive models might map onto affinity prediction tasks, where IC50/Kd labels are noisy and binned into broad classes…"
+    "text": "Once (admin side):\n\nInstall VirtualGL on server + client, run vglserver_config, add you to vglusers.\n\nIf you don’t have sudo, you need an admin to do this install/config once; after that, all user-side commands work exactly as shown.\n\nOnce (your account on the server):\nAfter you’ve been added to vglusers and logged out / in again, put this into ~/.bashrc:\n# VirtualGL defaults for this server\nexport VGL_DISPLAY=egl\nexport VGL_IMAGEQUAL=95\nexport VGL_NPROCS=4\nEveryday workflow then becomes:\nvglconnect -s user@server\nvglrun pymol protein.pdb\nThat’s it: no newgrp, no manual export every time.\nIf you don’t want to touch ~/.bashrc, you can instead do:\nvglconnect -s user@server\nVGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb\n\nRunning PyMOL on a remote GPU server is often more painful than it should be:\n\nYou can’t use AnyDesk / RDP because of institutional policy.\nThe server is headless (no display, no local X session).\nX11 forwarding sometimes works, sometimes not, and is often ridiculously slow.\n\nThere are some workarounds:\n\nssh -X pymol\nbrowser-based viewers like py3Dmol, nglview, etc.\nVS Code / web-based viewers.\n\n…but they all have trade-offs:\n\nssh -X is almost always too laggy over a real network and often falls back to software rendering (no GPU).\nCopying structures or MD trajectories to a laptop just to visualize them is slow and inconvenient; long trajectories are often huge, and many lightweight viewers don’t handle trajectories particularly well anyway.\nNotebook / browser viewers are great for quick inspection, but:\n\nit’s harder to do complex selections,\nyou don’t get the same level of interactive control as in PyMOL,\nand they’re not ideal for publication-quality renders with fine-tuned lighting, ray-tracing, etc.\n\n\nWhat I really want is:\n\nFull PyMOL, on the remote GPU, but the window appears locally and stays responsive.\n\nThat’s exactly what VirtualGL gives: the server does the GPU rendering, sends compressed frames over SSH, and you see a normal window on your machine.\nIn this note I’ll focus on that:\n\nWhy not just ssh -X?\nSetting up VirtualGL.\nOption A — VirtualGL over SSH (vglconnect + vglrun): single PyMOL window (my default).\nOption B — TurboVNC + VirtualGL: full remote desktop, in case you want PyMOL + everything else.\nNotebook-based viewers in Jupyter (py3Dmol, nglview).\nMolecular viewers in VS Code (Protein Viewer, Nano Protein Viewer).\nSummary."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#tldr",
+    "href": "posts/remote-pymol/index.html#tldr",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "",
+    "text": "Once (admin side):\n\nInstall VirtualGL on server + client, run vglserver_config, add you to vglusers.\n\nIf you don’t have sudo, you need an admin to do this install/config once; after that, all user-side commands work exactly as shown.\n\nOnce (your account on the server):\nAfter you’ve been added to vglusers and logged out / in again, put this into ~/.bashrc:\n# VirtualGL defaults for this server\nexport VGL_DISPLAY=egl\nexport VGL_IMAGEQUAL=95\nexport VGL_NPROCS=4\nEveryday workflow then becomes:\nvglconnect -s user@server\nvglrun pymol protein.pdb\nThat’s it: no newgrp, no manual export every time.\nIf you don’t want to touch ~/.bashrc, you can instead do:\nvglconnect -s user@server\nVGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb\n\nRunning PyMOL on a remote GPU server is often more painful than it should be:\n\nYou can’t use AnyDesk / RDP because of institutional policy.\nThe server is headless (no display, no local X session).\nX11 forwarding sometimes works, sometimes not, and is often ridiculously slow.\n\nThere are some workarounds:\n\nssh -X pymol\nbrowser-based viewers like py3Dmol, nglview, etc.\nVS Code / web-based viewers.\n\n…but they all have trade-offs:\n\nssh -X is almost always too laggy over a real network and often falls back to software rendering (no GPU).\nCopying structures or MD trajectories to a laptop just to visualize them is slow and inconvenient; long trajectories are often huge, and many lightweight viewers don’t handle trajectories particularly well anyway.\nNotebook / browser viewers are great for quick inspection, but:\n\nit’s harder to do complex selections,\nyou don’t get the same level of interactive control as in PyMOL,\nand they’re not ideal for publication-quality renders with fine-tuned lighting, ray-tracing, etc.\n\n\nWhat I really want is:\n\nFull PyMOL, on the remote GPU, but the window appears locally and stays responsive.\n\nThat’s exactly what VirtualGL gives: the server does the GPU rendering, sends compressed frames over SSH, and you see a normal window on your machine.\nIn this note I’ll focus on that:\n\nWhy not just ssh -X?\nSetting up VirtualGL.\nOption A — VirtualGL over SSH (vglconnect + vglrun): single PyMOL window (my default).\nOption B — TurboVNC + VirtualGL: full remote desktop, in case you want PyMOL + everything else.\nNotebook-based viewers in Jupyter (py3Dmol, nglview).\nMolecular viewers in VS Code (Protein Viewer, Nano Protein Viewer).\nSummary."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#why-not-just-ssh--x",
+    "href": "posts/remote-pymol/index.html#why-not-just-ssh--x",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "0. Why not just ssh -X?",
+    "text": "0. Why not just ssh -X?\nThe traditional way is:\nssh -X user@server\npymol some_structure.pdb\nThis uses X11 forwarding:\n\nraw drawing commands are sent over the network,\nrendering often happens on the client, not on the remote GPU,\nthe protocol is not optimized for 3D graphics.\n\nIn practice this usually means:\n\nterrible FPS when you rotate the molecule,\nhigh latency,\nbroken or messy behavior with modern setups (Wayland on the client, EGL-only servers, etc.).\n\nIt’s fine for showing a small dialog, but for interactive 3D molecular graphics it’s not pleasant.\n\n\n\n\n\n\n\nVirtualGL fixes this by:\n\nrendering on the remote GPU,\ncompressing frames to JPEG/PNG,\nstreaming them efficiently to the client.\n\nThe difference in usability is night and day."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#setup-virtualgl-on-server-and-client",
+    "href": "posts/remote-pymol/index.html#setup-virtualgl-on-server-and-client",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "1. Setup: VirtualGL on server and client",
+    "text": "1. Setup: VirtualGL on server and client\nAssumptions:\n\nServer: Ubuntu 22.04, NVIDIA GPU, proprietary driver installed.\nClient: Linux desktop (Xorg or Wayland).\nYou can SSH into the server.\n\nYou need VirtualGL on both the server and your local machine.\n\nIf you don’t have sudo on the server, you need an admin to do this section once (install VirtualGL, run vglserver_config, add you to vglusers). After that, everything below works unprivileged.\n\n\n1.1. Install VirtualGL on the server\nDownload and install the .deb (example URL, adjust version if needed):\n# on the server\ncurl -L -o /tmp/virtualgl.deb \\\n  https://packagecloud.io/dcommander/virtualgl/packages/any/any/virtualgl_3.1.1-20240228_amd64.deb/download\n\nsudo dpkg -i /tmp/virtualgl.deb\nThen run the configuration script:\nsudo /opt/VirtualGL/bin/vglserver_config\nIn the interactive dialog I typically choose:\n\n1) GLX + EGL if I don’t care about local Wayland logins on that machine (most compatible, but may force local users to X11), or\n3) EGL only if the machine is basically a headless GPU box and I don’t want to mess with GLX.\n\nOther important prompts:\n\nRestrict 3D access to group vglusers? → Y\nAdd your user to vglusers? → Y\n\nAfter that:\n\nLog out and log back in so the new group membership is active, or\nrun newgrp vglusers once in an existing shell as a quick workaround.\n\nYou do not need to run newgrp vglusers on every login; it’s a one-time thing after being added to the group.\n\n\n1.2. Install VirtualGL on your local machine\nSame idea on the client:\n# on your local machine\ncurl -L -o /tmp/virtualgl.deb \\\n  https://packagecloud.io/dcommander/virtualgl/packages/any/any/virtualgl_3.1.1-20240228_amd64.deb/download\n\nsudo dpkg -i /tmp/virtualgl.deb\nThat’s usually it. No additional configuration needed on the client side.\n\n\n1.3. Make the VirtualGL environment automatic (recommended)\nOn the server, once your account is in vglusers and you’ve re-logged, add this to ~/.bashrc (or ~/.zshrc):\n# VirtualGL defaults for this server\nexport VGL_DISPLAY=egl\nexport VGL_IMAGEQUAL=95\nexport VGL_NPROCS=4\nIf you only want this for interactive shells, you can wrap it:\nif [ -n \"$PS1\" ]; then\n    export VGL_DISPLAY=egl\n    export VGL_IMAGEQUAL=95\n    export VGL_NPROCS=4\nfi\nNow, every time you SSH in (including via vglconnect), these variables are already set and you don’t have to think about them.\nAlternative patterns if you don’t want permanent exports:\n\nDefine a helper function in ~/.bashrc:\nvglenv() {\n    export VGL_DISPLAY=egl\n    export VGL_IMAGEQUAL=95\n    export VGL_NPROCS=4\n}\nThen per session:\nvglconnect -s user@server\nvglenv\nvglrun pymol protein.pdb\nOr keep your dotfiles clean and just use an env prefix:\nVGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb\n\nI personally prefer the “put it in ~/.bashrc and forget about it” approach."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#option-a-pymol-over-ssh-with-vglconnect-my-default",
+    "href": "posts/remote-pymol/index.html#option-a-pymol-over-ssh-with-vglconnect-my-default",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "2. Option A — PyMOL over SSH with vglconnect (my default)",
+    "text": "2. Option A — PyMOL over SSH with vglconnect (my default)\nThis is what I use most of the time: you open a single SSH session that is “VirtualGL-aware” and then start PyMOL with GPU acceleration.\nNo desktop, no VNC, just a PyMOL window that appears locally.\n\n2.1. Open a VirtualGL SSH session\nOn your local machine:\n/opt/VirtualGL/bin/vglconnect -s user@SERVER_IP_OR_NAME\nThis runs ssh under the hood, but also sets up the env so that vglrun will work out of the box.\nYou’ll now be in a shell on the server.\n\nYou could also do a regular ssh and then call /opt/VirtualGL/bin/vglrun explicitly; I just find vglconnect convenient.\n\n\n\n2.2. (Optional) Set VirtualGL env for this session\nIf you followed §1.3 and added the exports to ~/.bashrc, you can skip this – the variables are already set.\nIf not, you can either call your helper:\nvglenv\nor do the exports manually:\nexport VGL_DISPLAY=egl\nexport VGL_IMAGEQUAL=95\nexport VGL_NPROCS=4\nor use the one-liner prefix later:\nVGL_DISPLAY=egl VGL_IMAGEQUAL=95 VGL_NPROCS=4 vglrun pymol protein.pdb\nYou do not normally need newgrp vglusers here; that was only required once right after being added to the group (or you just log out/in instead).\nBefore running PyMOL for the first time on a machine, it’s worth checking that VirtualGL sees the NVIDIA GPU:\nvglrun glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'\nYou want to see something like:\n\nOpenGL vendor string: NVIDIA Corporation\nOpenGL renderer string: NVIDIA GeForce ...\n\nIf you see llvmpipe or Mesa, you’re not using the GPU.\n\n\n2.3. Run PyMOL via VirtualGL\nNow just:\nvglrun pymol /path/to/your_structure.pdb\nA PyMOL window should pop up on your local desktop.\nFrom PyMOL’s point of view it’s running on the server, with access to server-side file paths and GPUs. From your point of view it behaves like a local app, but:\n\nless lag than X forwarding,\nproper OpenGL on the remote GPU,\nworks even when RDP/AnyDesk/etc. are blocked.\n\nInside PyMOL I also enable this setting for correct visualization of surface with transparency:\nset transparency_mode, 2"
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#option-b-turbovnc-virtualgl-full-remote-desktop",
+    "href": "posts/remote-pymol/index.html#option-b-turbovnc-virtualgl-full-remote-desktop",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "3. Option B — TurboVNC + VirtualGL (full remote desktop)",
+    "text": "3. Option B — TurboVNC + VirtualGL (full remote desktop)\nSometimes you want more than just PyMOL:\n\nmultiple terminals,\na web browser,\nperhaps another molecular viewer (Chimera(X), VMD, Coot, etc.),\nall running in a persistent remote session you can reconnect to.\n\nFor that, I use TurboVNC + VirtualGL:\n\nTurboVNC provides the remote desktop.\nVirtualGL provides GPU-accelerated 3D rendering inside that desktop.\n\n\n3.1. Install TurboVNC and a lightweight desktop\nOn the server (again, admin once; if you don’t have sudo, they do this step):\n# TurboVNC server\ncurl -L -o /tmp/turbovnc.deb \\\n  https://sourceforge.net/projects/turbovnc/files/3.1/turbovnc_3.1_amd64.deb/download\n\nsudo dpkg -i /tmp/turbovnc.deb\n\n# lightweight desktop environment\nsudo apt update\nsudo apt install -y xfce4 xfce4-terminal dbus-x11\nYou only need one DE; I use Xfce because it’s small and works well over VNC.\n\n\n3.2. Create a VNC startup script\nCreate ~/.vnc/xstartup.turbovnc on the server:\ncat &gt; ~/.vnc/xstartup.turbovnc &lt;&lt;'SH'\n#!/bin/sh\nunset SESSION_MANAGER\nunset DBUS_SESSION_BUS_ADDRESS\n\nexport XDG_SESSION_TYPE=x11\nexport XDG_RUNTIME_DIR=/tmp/xdg-$USER\nmkdir -p \"$XDG_RUNTIME_DIR\"\nchmod 700 \"$XDG_RUNTIME_DIR\"\n\nexec dbus-launch --exit-with-session startxfce4\nSH\n\nchmod +x ~/.vnc/xstartup.turbovnc\nThis script will be used to start the Xfce desktop when the VNC server launches.\n\n\n3.3. Start a VNC desktop on the server\nOn the server:\n/opt/TurboVNC/bin/vncserver :1 \\\n  -localhost \\\n  -geometry 1920x1080 \\\n  -depth 24 \\\n  -xstartup \"$HOME/.vnc/xstartup.turbovnc\"\nNotes:\n\n:1 → display number; this corresponds to TCP port 5901.\n-localhost → ensures that only local connections (i.e. via SSH tunnel) can reach it.\n\nYou can check active sessions:\n/opt/TurboVNC/bin/vncserver -list\n\n\n3.4. Connect from your local machine (SSH tunnel + viewer)\nOn your local machine:\n# Terminal 1: SSH tunnel (keep this open)\nssh -NT -L 5901:localhost:5901 user@SERVER_IP_OR_NAME\nThen, in another terminal or via your GUI:\n# connect with a VNC viewer\nvncviewer localhost:1\n# or:\n# /opt/TurboVNC/bin/vncviewer localhost:1\nYou should now see an Xfce desktop running from the server.\n\n\n3.5. Run PyMOL with VirtualGL inside the VNC desktop\nInside that desktop, open a terminal.\nIf you’ve put the VirtualGL exports in ~/.bashrc, they should already be active in that terminal, so you can go straight to:\nvglrun glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'\nvglrun pymol /path/to/your_structure.pdb\nIf not, you can either call vglenv (if you defined it) or export manually:\nexport VGL_DISPLAY=egl\nexport VGL_IMAGEQUAL=95\nexport VGL_NPROCS=4\nvglrun pymol /path/to/your_structure.pdb\nAgain, you normally don’t need newgrp vglusers here as long as your group membership is already active (you re-logged after being added).\nWhen you’re done:\n/opt/TurboVNC/bin/vncserver -kill :1"
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#other-molecular-viewers-chimera-vmd-etc.",
+    "href": "posts/remote-pymol/index.html#other-molecular-viewers-chimera-vmd-etc.",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "4. Other molecular viewers (Chimera, VMD, etc.)",
+    "text": "4. Other molecular viewers (Chimera, VMD, etc.)\nThe nice thing about this setup is that it’s not PyMOL-specific.\nAnything that uses OpenGL can go through VirtualGL:\n\nUCSF Chimera / ChimeraX\nVMD\nCoot\nother molecular graphics tools.\n\nYou just prefix the command with vglrun:\nvglrun chimeraX\nvglrun vmd\nvglrun coot\nI personally mainly use PyMOL, so I haven’t gone deep into these with VirtualGL yet, but in principle they should work exactly the same way."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#notebook-based-viewers-in-jupyter-py3dmol-nglview",
+    "href": "posts/remote-pymol/index.html#notebook-based-viewers-in-jupyter-py3dmol-nglview",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "5. Notebook-based viewers in Jupyter (py3Dmol, nglview)",
+    "text": "5. Notebook-based viewers in Jupyter (py3Dmol, nglview)\nIf you already work a lot in notebooks, sometimes it’s easier to just look at the structure inside Jupyter and not bother with PyMOL at all.\nTwo viewers I’ve used:\n\npy3Dmol – thin Python wrapper around 3Dmol.js.\nnglview – Jupyter widget based on NGL.\n\nInstall (on the server, in your conda env):\n# pick one or both:\npip install py3Dmol nglview\n# or\nconda install -c conda-forge py3Dmol nglview\nMinimal examples:\npy3Dmol\n\n\nCode\nimport py3Dmol\n\nview = py3Dmol.view(width=600, height=600)\nview.addModel(open(\"protein.pdb\").read(), \"pdb\")\nview.setStyle({\"cartoon\": {}})\nview.zoomTo()\nview.show()\n\n\n\n        3Dmol.js failed to load for some reason.  Please check your browser console for error messages.\n        \n\n\n\nnglview\n\n\nCode\nimport nglview as nv\n\nw = nv.show_file(\"protein.pdb\")\nw.clear_representations()\nw.add_cartoon()\nw\n\n\n\n\n\nThese are great for:\n\nquick inspection,\nsharing small notebooks with embedded 3D views,\nnot dealing with any X/VirtualGL setup.\n\nBut compared to full PyMOL, in my experience:\n\nit’s harder to do very detailed selections and custom combinations of objects,\nyou don’t get the same level of scriptable rendering control,\nand they’re not the best choice for final, publication-quality figures.\n\nThere are more notebook-based viewers out there; I’m just listing the two I actually tried."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#molecular-viewers-in-vs-code-protein-viewer-nano-protein-viewer",
+    "href": "posts/remote-pymol/index.html#molecular-viewers-in-vs-code-protein-viewer-nano-protein-viewer",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "6. Molecular viewers in VS Code (Protein Viewer, Nano Protein Viewer)",
+    "text": "6. Molecular viewers in VS Code (Protein Viewer, Nano Protein Viewer)\nIf you’re already editing code on the remote server via VS Code Remote SSH, it’s nice to be able to open a *.pdb or *.cif and immediately see a 3D view next to the code.\nTwo VS Code extensions that do this using Mol* under the hood:\n\nProtein Viewer – extension by Arian Jamasb; simple viewer for biological structures.\nNano Protein Viewer – extension by Steven Yu; more advanced, grid view, Alphafold / diffusion-related features.\n\nBasic installation (on your local machine):\n# from terminal, with VS Code closed\ncode --install-extension ArianJamasb.protein-viewer\ncode --install-extension StevenYu.nano-protein-viewer\nOr via GUI:\n\nOpen VS Code.\nGo to Extensions (Ctrl+Shift+X / Cmd+Shift+X).\nSearch for “Protein Viewer” and/or “Nano Protein Viewer”.\nInstall.\n\nWorkflow (with Remote SSH):\n\nOpen the remote project in VS Code (using the Remote SSH extension).\nOpen a structure file (.pdb, .cif, .mol2, etc.).\nUse the extension’s command (usually from the Command Palette or a button in the editor) to open the 3D view.\n\n\n\n\n\n\n\n\nThis is very handy for:\n\nquickly checking structures without leaving VS Code,\nhaving multiple proteins open in a grid (Nano Protein Viewer),\nfast “sanity check” visualization while coding.\n\nOne practical note: these extensions rely on HTML/JS webviews inside VS Code. In my experience, the snap build of VS Code on Ubuntu tends to break webview-based stuff more easily (or be slower). I’d recommend installing VS Code from the .deb package instead of the snap if you want these viewers to work reliably."
+  },
+  {
+    "objectID": "posts/remote-pymol/index.html#summary",
+    "href": "posts/remote-pymol/index.html#summary",
+    "title": "Running PyMOL on a Remote Server (Without AnyDesk or RDP)",
+    "section": "7. Summary",
+    "text": "7. Summary\n\nssh -X pymol does work, but is usually too slow and often doesn’t use the GPU.\nVirtualGL lets the server GPU do the heavy lifting and sends compressed frames to your local machine.\nIf you don’t have sudo, you just need an admin to:\n\ninstall VirtualGL / TurboVNC once,\nrun vglserver_config,\nadd you to vglusers. After that, your everyday workflow is unprivileged.\n\n\nFor day-to-day work I use:\n\nOption A — vglconnect + vglrun pymol: simple, single-window workflow.\nOption B — TurboVNC + VirtualGL when I want a full desktop session and multiple tools (PyMOL, Chimera, VMD, etc.).\n\nFor lightweight inspection:\n\nuse py3Dmol / nglview inside Jupyter,\nor Protein Viewer / Nano Protein Viewer inside VS Code.\n\nThey don’t fully replace PyMOL for complex selections and publication-quality renders, but together they cover most of the “I just need to see this structure quickly, from a remote machine” use cases."
+  },
+  {
+    "objectID": "notes.html",
+    "href": "notes.html",
+    "title": "Notes",
+    "section": "",
+    "text": "This is where I put less formal things.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Research Blog",
+    "section": "",
+    "text": "Welcome to my research blog. I write about structural bioinformatics, deep learning, and related technical topics. For more informal posts, see the Notes section.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRunning PyMOL on a Remote Server (Without AnyDesk or RDP)\n\n\n\nnotes\n\ntools\n\nresearch\n\n\n\nUsing VirtualGL (vglconnect / vglrun) to get a smooth remote PyMOL on a headless GPU server, plus notebook and VS Code viewers.\n\n\n\n\n\nNov 24, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html#currently",
+    "href": "index.html#currently",
+    "title": "About",
+    "section": "Currently",
+    "text": "Currently\n\nPhD student in computer science at Constructor University (Bremen).\nResearcher at a startup working on computational methods for drug discovery.\nWorking on binding-site prediction and generative models for small molecules / ligands."
+  },
+  {
+    "objectID": "index.html#research-interests",
+    "href": "index.html#research-interests",
+    "title": "About",
+    "section": "Research interests",
+    "text": "Research interests\n\nDeep learning on 3D molecular data (grids, point clouds, graphs).\nBinding site identification and ion/ligand specificity.\nGenerative models for molecule design (VAEs, diffusion, hierarchical models).\nPractical pipelines: from PDB datasets to screening-ready models."
+  },
+  {
+    "objectID": "index.html#selected-work",
+    "href": "index.html#selected-work",
+    "title": "About",
+    "section": "Selected work",
+    "text": "Selected work\n\nSpatiotemporal identification of druggable binding sites – deep-learning framework to detect transient pockets from MD simulations\n(Communications Biology, 2020, 10.1038/s42003-020-01350-0).\nProtein–peptide binding site detection – 3D CNN models for protein–peptide interfaces\n(JCIM, 2021, 10.1021/acs.jcim.1c00475).\nBinding site detection in nucleic acid macromolecules – extension of structure-based deep learning to RNA/DNA binding sites\n(NAR Genomics and Bioinformatics, 2021, 10.1093/nargab/lqab111).\nReview: computational methods for binding site prediction on macromolecules – overview of current approaches and open challenges\n(Quarterly Reviews of Biophysics, 2025, 10.1017/S003358352500006X).\n\nIn the meantime, you can see some of the technical background in my Research Blog."
+  },
+  {
+    "objectID": "index.html#about-this-site",
+    "href": "index.html#about-this-site",
+    "title": "About",
+    "section": "About this site",
+    "text": "About this site\nThis website has two main parts:\n\nResearch Blog - technical posts about structural bioinformatics, deep learning, datasets, and tooling.\nNotes - more informal things: music, books, generative art, and various experiments.\n\nThe goal is to document things I find interesting or useful enough to write down."
+  },
+  {
+    "objectID": "index.html#elsewhere",
+    "href": "index.html#elsewhere",
+    "title": "About",
+    "section": "Elsewhere",
+    "text": "Elsewhere\n\nGitHub: https://github.com/igorkozlovskii\nLinkedIn: https://www.linkedin.com/in/igorkozlovskii\nEmail: igor [dot] kozlovskii [dot] a [at] google [dot] com"
   },
   {
     "objectID": "cv.html",
@@ -68,61 +180,5 @@
     "title": "CV",
     "section": "",
     "text": "Certificate of State Registration of a Computer Program No. RU 2023613561 – BiteNet (v1.2), 2023.\n\nPatent No. RU 2743316 – Method for identification of binding sites of protein complexes, 2021.\n\nCertificate of State Registration of a Computer Program No. RU 2020661135 – BiteNet, 2020."
-  },
-  {
-    "objectID": "index.html#currently",
-    "href": "index.html#currently",
-    "title": "About",
-    "section": "Currently",
-    "text": "Currently\n\nPhD student in computer science at Constructor University (Bremen).\nResearcher at a startup working on computational methods for drug discovery.\nWorking on binding-site prediction and generative models for small molecules / ligands."
-  },
-  {
-    "objectID": "index.html#research-interests",
-    "href": "index.html#research-interests",
-    "title": "About",
-    "section": "Research interests",
-    "text": "Research interests\n\nDeep learning on 3D molecular data (grids, point clouds, graphs).\nBinding site identification and ion/ligand specificity.\nGenerative models for molecule design (VAEs, diffusion, hierarchical models).\nPractical pipelines: from PDB datasets to screening-ready models."
-  },
-  {
-    "objectID": "index.html#selected-work",
-    "href": "index.html#selected-work",
-    "title": "About",
-    "section": "Selected work",
-    "text": "Selected work\n\nSpatiotemporal identification of druggable binding sites – deep-learning framework to detect transient pockets from MD simulations\n(Communications Biology, 2020, 10.1038/s42003-020-01350-0).\nProtein–peptide binding site detection – 3D CNN models for protein–peptide interfaces\n(JCIM, 2021, 10.1021/acs.jcim.1c00475).\nBinding site detection in nucleic acid macromolecules – extension of structure-based deep learning to RNA/DNA binding sites\n(NAR Genomics and Bioinformatics, 2021, 10.1093/nargab/lqab111).\nReview: computational methods for binding site prediction on macromolecules – overview of current approaches and open challenges\n(Quarterly Reviews of Biophysics, 2025, 10.1017/S003358352500006X).\n\nIn the meantime, you can see some of the technical background in my Research Blog."
-  },
-  {
-    "objectID": "index.html#about-this-site",
-    "href": "index.html#about-this-site",
-    "title": "About",
-    "section": "About this site",
-    "text": "About this site\nThis website has two main parts:\n\nResearch Blog - technical posts about structural bioinformatics, deep learning, datasets, and tooling.\nNotes - more informal things: music, books, generative art, and various experiments.\n\nThe goal is to document things I find interesting or useful enough to write down."
-  },
-  {
-    "objectID": "index.html#elsewhere",
-    "href": "index.html#elsewhere",
-    "title": "About",
-    "section": "Elsewhere",
-    "text": "Elsewhere\n\nGitHub: https://github.com/igorkozlovskii\nLinkedIn: https://www.linkedin.com/in/igorkozlovskii\nEmail: igor [dot] kozlovskii [dot] a [at] google [dot] com"
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Research Blog",
-    "section": "",
-    "text": "Welcome to my research blog. I write about structural bioinformatics, deep learning, and related technical topics. For more informal posts, see the Notes section.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDequantization tricks for noisy affinity prediction\n\n\n\nresearch\n\ndeep-learning\n\nstructural-bioinf\n\n\n\nThinking about discretization/dequantization ideas for binding affinity models.\n\n\n\n\n\nNov 23, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "notes.html",
-    "href": "notes.html",
-    "title": "Notes",
-    "section": "",
-    "text": "This is where I put less formal things.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nGuitar practice log: metalcore rhythms\n\n\n\nmusic\n\npersonal\n\n\n\nNotes on learning palm-muted chugs and basic metalcore rhythms.\n\n\n\n\n\nNov 24, 2025\n\n\nIgor Kozlovskii\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/metal-practice-log/index.html",
-    "href": "posts/metal-practice-log/index.html",
-    "title": "Guitar practice log: metalcore rhythms",
-    "section": "",
-    "text": "Quick log of what I practiced this week, mainly focusing on downpicking and some polyrhythmic riffs…"
   }
 ]
